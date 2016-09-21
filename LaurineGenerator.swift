@@ -1376,14 +1376,15 @@ private extension NSMutableDictionary {
         let replacementDictionary : NSMutableDictionary = NSMutableDictionary();
         
         // Store current state for further replacement
-        var previousObject : AnyObject? = onObject;
+        var previousObject : Any? = onObject;
         var previousReplacement : NSMutableDictionary = replacementDictionary;
         var reachedDictionaryLeaf : Bool = false;
         
         // Traverse through path from root to deepest level
         for path : String in pathComponents {
             
-            let currentObject : Any? = reachedDictionaryLeaf ? nil : (previousObject as? NSDictionary)?.object(forKey: path);
+            let previousObjectDict = (previousObject as? NSDictionary)
+            let currentObject : Any? = reachedDictionaryLeaf ? nil : previousObjectDict?.object(forKey: path);
             
             // Check if object already exists. If not, create new level, if allowed, or end
             if currentObject == nil {
@@ -1419,7 +1420,7 @@ private extension NSMutableDictionary {
             }
             
             // Replace previous object with the new one
-            previousObject = currentObject as AnyObject
+            previousObject = currentObject
         }
         
         // Replace root object with newly created n-level dictionary
@@ -1807,7 +1808,7 @@ class Localization {
         }
         let methodParamsString = methodParams.joined(separator: ", ")
         
-        methodHeaderParams = methodHeaderParams.trimmingCharacters(in: CharacterSet(charactersIn: ", _"))
+        methodHeaderParams = methodHeaderParams.trimmingCharacters(in: CharacterSet(charactersIn: ", "))
         return TemplateFactory.templateForSwiftFuncWithName(self.variableName(methodName, lang: .Swift), key: key, table: table, baseTranslation : baseTranslation, methodHeader: methodHeaderParams, params: methodParamsString, contentLevel: contentLevel)
     }
     
